@@ -1,0 +1,105 @@
+
+//+------------------------------------------------------------------+
+//|                                                     EA Super 8 MT5 |
+//|                                  Developer's Site: forexroboteasy.com |
+//|                                             Developed by: Forex Robot Easy Team |
+//+------------------------------------------------------------------+
+
+//--- Include necessary libraries
+#include <Trade\Trade.mqh>
+#include <DateTime\DateTime.mqh>
+
+//--- Define global variables
+CTrade trade;
+int totalTrades = 0;
+double accountBalance = AccountInfoDouble(ACCOUNT_BALANCE);
+double capitalPart = accountBalance / 10;
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//|                                                                  |
+//|                      Expert Advisor Functions                     |
+//|                                                                  |
+//|                                                                  |
+//+------------------------------------------------------------------+
+
+//--- Initialization function
+int OnInit()
+{
+    //--- Set trading volume within recommended limits
+    trade.SetVolume(0.01);
+
+    return(INIT_SUCCEEDED);
+}
+
+//--- Start function
+void OnStart()
+{
+    //--- Implement innovative methods to determine trend direction
+    if (IsUptrend())
+    {
+        Buy();
+    }
+    else if (IsDowntrend())
+    {
+        Sell();
+    }
+    else
+    {
+        CloseAllPositions();
+    }
+}
+
+//--- Function to determine if there is an uptrend
+bool IsUptrend()
+{
+    //--- Add trend determination logic here
+    return true;
+}
+
+//--- Function to determine if there is a downtrend
+bool IsDowntrend()
+{
+    //--- Add trend determination logic here
+    return false;
+}
+
+//--- Function to open a buy position
+void Buy()
+{
+    //--- Calculate lot size based on capital part
+    double lotSize = capitalPart / SymbolInfoDouble(Symbol(), SYMBOL_BID);
+
+    //--- Open buy position
+    trade.Buy(lotSize, Symbol(), 0, 0, 0, 0, 'Buy', 0);
+    totalTrades++;
+}
+
+//--- Function to open a sell position
+void Sell()
+{
+    //--- Calculate lot size based on capital part
+    double lotSize = capitalPart / SymbolInfoDouble(Symbol(), SYMBOL_ASK);
+
+    //--- Open sell position
+    trade.Sell(lotSize, Symbol(), 0, 0, 0, 0, 'Sell', 0);
+    totalTrades++;
+}
+
+//--- Function to close all positions
+void CloseAllPositions()
+{
+    //--- Close all open positions
+    trade.PositionCloseAll();
+    totalTrades = 0;
+}
+
+//--- Deinitialization function
+void OnDeinit(const int reason)
+{
+    //--- Check if there are open positions before closing the EA
+    if (totalTrades > 0)
+    {
+        CloseAllPositions();
+    }
+}
